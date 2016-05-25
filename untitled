@@ -1,0 +1,41 @@
+"""
+Definition of Interval.
+class Interval(object):
+    def __init__(self, start, end):
+        self.start = start
+        self.end = end
+"""
+
+
+class Solution:	
+    """
+    @param A, queries: Given an integer array and an Interval list
+                       The ith query is [queries[i-1].start, queries[i-1].end]
+    @return: The result list
+    """
+    def intervalSum(self, A, queries):
+        # write your code here
+        seg_tree=[0]*(2*len(A)-1)
+        self.constructTree(A, seg_tree, 0, len(A)-1, 0)
+        res=[]
+        for q in queries:
+            res.append(self.searchSegmentTree(seg_tree, q.start, q.end, 0, len(A)-1, 0))
+        return res
+    
+    def constructTree(self, A, seg, l, r, pos):
+        print l, r, pos, len(seg), len(A)
+        if l==r:
+            seg[pos]=A[l]
+            return
+        mid=(l+r)/2
+        self.constructTree(A, seg, l, mid, 2*pos+1)
+        self.constructTree(A, seg, mid+1, r, 2*pos+2)
+        seg[pos]=seg[2*pos+1]+seg[2*pos+2]
+    
+    def searchSegmentTree(self, A, start, end, l, r, pos):
+        if end<l or start>r: return 0
+        if start<=l<=r<=end: return A[pos]
+        mid=(l+r)/2
+        return self.searchSegmentTree(A, start, end, l, mid, 2*pos+1) + self.searchSegmentTree(A, start, end, mid+1, r, 2*pos+2)
+        
+        
